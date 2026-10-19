@@ -15,18 +15,55 @@ iface wlp3s0 inet static
 wpa-ssid #The network name 
 wpa-psk  #The network password
 ```
-- I installed the openssh-server in order to connect to it via SSH.<br>
-`sudo apt update` <br>
-`sudo apt install openssh-server`<br>
-`sudo systemctl start ssh`
-- For my working computer I generate a key for secured ssh connection.<br>
-`ssh-keygen`<br>
-`ssh-copy-id username@serverip`
-- I installed ufw (Uncomplicated Firewall) and opened port 22 for SSH connections, as well as port 80 for hosting the website.<br>
-`sudo apt update`<br>
-`sudo apt install ufw`<br>
-`sudo systemctl start ssh`<br>
-`sudo ufw allow 22`<br>
-`sudo ufw allow 80`
-- I transferred the HTML, CSS, and JS files from my main laptop to the server using rsync.
-- After all that, I installed Nginx and configured it to host the site containing all the previously transferred files. (The configuration of the file can be view in here
+- I installed the openssh-server in order to connect to it via SSH.
+```Bash
+sudo apt update
+sudo apt install openssh-server
+sudo systemctl start ssh
+```
+- For my working computer I generate a key for secured ssh connection.
+```Bash
+ssh-keygen
+ssh-copy-id username@serverip
+```
+- I installed ufw (Uncomplicated Firewall) and opened port 22 for SSH connections, as well as port 80 for hosting the website.
+```Bash
+sudo apt update
+sudo apt install ufw
+sudo systemctl enable --now ufw
+sudo ufw allow 22
+sudo ufw allow 80
+```
+- I transferred the [HTML](siteCode/CV.html), [CSS](siteCode/CV.css), and [JS](siteCode/CV.js) files from my main laptop to the server using rsync.
+`rsync CV.html CV.js CV.css img.jpg username@serverip:~/site`
+- After all that, I installed Nginx and configured it to host the site containing all the previously transferred files.
+```Bash
+sudo apt install nginx
+sudo systemctl start nginx
+```
+All my code file that I transfer from my computer was moved in the folder `/var/www/CV`
+After all that I create a new file in the `/etc/nginx/sites-available` named CV and there I put my nginx configuration
+```Bash
+server {
+	listen 80 default_server; #ipv4
+	listen [::]:80 ; #ipV6
+
+	root /var/www/CV; #The folder where html, css, js and jpg are
+
+	index CV.html CV.css CV.js img.jpg; # all the file use for my site
+
+	server_name cv.local; #The server name
+
+	location / {
+		# First attempt to serve request as file, then
+		# as directory, then fall back to displaying a 404.
+		try_files $uri $uri/ =404;
+	}
+
+}
+```
+The last thing that the site need is to create a linked file in the`/etc/nginx/sites-enable`
+```Bash
+sudo ln -s /etc/nginx/sites-available/CV /etc/nginx/sites-enabled/ 
+sudo systemctl restart nginx
+```
