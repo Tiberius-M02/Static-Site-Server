@@ -1,8 +1,8 @@
 # Static-Site-Server
 The project idea comes from [roadmap.sh](https://roadmap.sh/projects/static-site-server), and its primary objective is to host a simple website using **Nginx** on a Linux server. Completing this project can help you better understand the server hosting process and gain experience using tools like rsync and scp, as well as managing SSH connections.
-# The steps I followed making this project
-- I had rehabilitate an old laptop by switching its operating system from Windows 7 to **Debian** without a window manager or a root account for better security.
-- I modified the network settings to set a static IP address for the laptop form **/etc/network/interfaces**
+# Implementation Steps
+- I repurposed an old laptop by switching its operating system from Windows 7 to a headless **Debian** installation without a root account for better security.
+- I modified the network settings to set a static IP address for the laptop from `/etc/network/interfaces`
 ```Bash
 auto wlp3s0
 iface wlp3s0 inet static
@@ -21,7 +21,7 @@ sudo apt update
 sudo apt install openssh-server
 sudo systemctl start ssh
 ```
-- For my working computer I generate a key for secured ssh connection.
+- For my working computer, I generate a key for a secured ssh connection.
 ```Bash
 ssh-keygen
 ssh-copy-id username@serverip
@@ -41,7 +41,7 @@ sudo ufw allow 80
 sudo apt install nginx
 sudo systemctl start nginx
 ```
-All my code file that I transfer from my computer was moved in the folder `/var/www/CV`
+All the code files transferred from my computer was moved in the folder `/var/www/CV`
 After all that I create a new file in the `/etc/nginx/sites-available` named CV and there I put my nginx configuration
 ```Bash
 server {
@@ -50,7 +50,7 @@ server {
 
 	root /var/www/CV; #The folder where html, css, js and jpg are
 
-	index CV.html CV.css CV.js img.jpg; # all the file use for my site
+	index CV.html; #The index file for the site
 
 	server_name cv.local; #The server name
 
